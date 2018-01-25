@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringBootDataBaseHsqlInMemApplication {
+public class SpringBootDataBaseApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringBootDataBaseHsqlInMemApplication.class, args);
+        SpringApplication.run(SpringBootDataBaseApplication.class, args);
     }
 }

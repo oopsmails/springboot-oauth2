@@ -3,11 +3,14 @@
  */
 package com.oopsmails.springboot.template.inmemorydb.hsql.service;
 
+import com.oopsmails.springboot.template.inmemorydb.hsql.dao.UserRepository;
+import com.oopsmails.springboot.template.inmemorydb.hsql.domain.UserCart;
+import com.oopsmails.springboot.template.inmemorydb.hsql.mapper.UserCartRowMapper;
 import com.oopsmails.springboot.template.inmemorydb.hsql.model.User;
-import com.oopsmails.springboot.template.inmemorydb.hsql.utils.UserRowMapper;
+import com.oopsmails.springboot.template.inmemorydb.hsql.model.UserEntity;
+import com.oopsmails.springboot.template.inmemorydb.hsql.mapper.UserRowMapper;
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-/**
- * @author
- */
 @Service
 public class UserService {
 
@@ -31,13 +31,13 @@ public class UserService {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private DataSource dataSource;
-
-    @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
     private String insertOneSql;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public List<User> findAll() {
@@ -50,6 +50,30 @@ public class UserService {
         return jdbcTemplate.queryForObject(
                 "select * from users where userId=?",
                 new Object[]{id}, new UserRowMapper());
+    }
+
+    @Transactional(readOnly = true)
+    public List<User> findUserWithCartInfo(int userId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM users u LEFT OUTER JOIN carts c ON u.userId = c.userId where u.userId=?",
+                new Object[]{userId}, new UserRowMapper());
+    }
+
+
+    public List<UserCart> getAllUserCartMapping() {
+        return jdbcTemplate.query(
+                "SELECT u.userId, u.userName, c.ID as cartId, c.cartType FROM users u "
+                        + "LEFT OUTER JOIN carts c ON u.userId = c.userId WHERE c.userId IS NOT NULL",
+                new Object[]{}, new UserCartRowMapper());
+    }
+
+    public List<UserEntity> findAllUserWithCarts() {
+        return userRepository.findDistinctByCartsNotNull();
+//		return userRepository.findAll();
+    }
+
+    public List<UserEntity> findUserWithCarts(int UserId) {
+        return userRepository.findDistinctByUserIdAndCartsIsNotNull(UserId);
     }
 
     public void createUsers(final List<User> users) {
@@ -77,7 +101,6 @@ public class UserService {
         return result;
 
     }
-
 
     public User create(final User user) {
         jdbcTemplate.update(insertOneSql, (Object[]) new Object[]{

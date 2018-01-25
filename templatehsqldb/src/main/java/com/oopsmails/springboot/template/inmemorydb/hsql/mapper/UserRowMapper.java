@@ -1,17 +1,11 @@
-/**
- *
- */
-package com.oopsmails.springboot.template.inmemorydb.hsql.utils;
+package com.oopsmails.springboot.template.inmemorydb.hsql.mapper;
 
 import com.oopsmails.springboot.template.inmemorydb.hsql.model.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import org.springframework.jdbc.core.RowMapper;
 
-
-
-public class UserRowMapper implements RowMapper<User>{
+public class UserRowMapper implements RowMapper<User> {
 
     @Override
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
