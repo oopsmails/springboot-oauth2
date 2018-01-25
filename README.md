@@ -30,5 +30,14 @@ http://localhost:18083/ui2/securedPage
 http://localhost:18081/auth/login
 
 
+==========================================
+
+templatehsqldb:
+
+A project using in memory hsqldb.
+Test Springboot data jpa.
+
+1. Run SpringBootDataBaseApplication
+2. Run Postman, import InMemDbTest.postman_collection.json
 
 
